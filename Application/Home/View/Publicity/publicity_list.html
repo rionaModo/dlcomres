@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+    <foreach name="publicity_list" item="val" key="k" >
+    <tr>
+        <td><a href="/publicity/detail.html?id={$val.id}&publicity_name={$val.publicity_name}">{$val.publicity_name}</a></td>
+        <td>{$val.create_time}</td>
+        <td>{$val.create_people}</td>
+    </tr>
+     </foreach>
+</table>
+</body>
+</html>

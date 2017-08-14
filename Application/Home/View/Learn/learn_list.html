@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<a href="/Learn/create.html" target="_blank">创建</a>
+<table border="1" >
+    <tr>
+        <th>id</th>
+        <td>主题</td>
+        <td>内容</td>
+        <td>类型</td>
+    </tr>
+    <foreach name="learn_list" item="val" key="k" >
+
+        <tr>
+            <td>{$k+1}</td>
+            <td><a href="/Learn/create.html?id={$val.id}&from=edit" target="_blank">{$val.theme}</a></td>
+            <td>{$val.content}</td>
+            <td>{$val.type}</td>
+        </tr>
+    </foreach>
+</table>
+</body>
+</html>

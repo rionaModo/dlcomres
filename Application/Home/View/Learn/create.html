@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{$_GET.from}
+
+<form
+   <if condition="$_GET.from and $_GET.from eq 'edit'">
+            action="/Learn/learn_edit.php"
+    <else />
+    action="/Learn/learn_insert.php"
+   </if>
+            method="post"
+>
+
+    <div><lable>主题<input name="theme" value="{$detail[0].theme}"/></lable></div>
+    <div><lable>类型<input name="type" value="{$detail[0].type}"/></lable></div>
+    <div><lable>内容<textarea name="content"  >{$detail[0].content}</textarea></lable></div>
+<input name="id" type="hidden" value="{$_GET.id}">
+    <input type="submit" value="保存"/>
+</form>
+</body>
+</html>

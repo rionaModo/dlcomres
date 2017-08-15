@@ -22,6 +22,7 @@ class LearnController extends Controller {
         $learn_res= D('learn_list');
         $data=array(id=>guid(),'theme'=>I('post.theme'),'content'=>I('post.content'),type=>I('post.type'));
          $learn_res->add($data);
+        header("Location:/Learn/learn_list.html");
     }
 
     function learn_edit(){
@@ -32,5 +33,6 @@ class LearnController extends Controller {
         print_r($id);
         print_r($data);
         $detail= $learn_res->where($map)->save($data);//save($data);
+        header("Location:/Learn/learn_list.html");
     }
 }

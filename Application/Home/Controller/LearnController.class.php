@@ -30,9 +30,7 @@ class LearnController extends Controller {
         $learn_res= D('learn_list');
         $data=array('theme'=>I('post.theme'),'content'=>I('post.content'),type=>I('post.type'));
         $map['id']=$id;
-        print_r($id);
-        print_r($data);
-        $detail= $learn_res->where($map)->save($data);//save($data);
+        $detail= $learn_res->where($map)->save($data);
         header("Location:/Learn/learn_list.html");
     }
 }

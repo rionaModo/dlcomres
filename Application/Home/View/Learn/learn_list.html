@@ -2,27 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>学习新的列表</title>
+    <link href="__CSS__/common/reset.css" rel="stylesheet">
+    <link href="__CPT__/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .main_content{
+            padding-left: 25px;
+
+        }
+    </style>
 </head>
 <body>
 
-
-<a href="/Learn/create.html" target="_blank">创建</a>
-<table border="1" >
-    <tr>
-        <th>id</th>
-        <td>主题</td>
-        <td>内容</td>
-        <td>类型</td>
-    </tr>
-    <foreach name="learn_list" item="val" key="k" >
+<div class="main_content">
+    <a href="/Learn/create.html" target="_blank" class="create_btn">创建</a>
+    <table class="table" >
+        <caption>学习心得</caption>
+        <thead>
         <tr>
-            <td>{$k+1}</td>
-            <td><a href="/Learn/create.html?id={$val.id}&from=edit" target="_blank">{$val.theme}</a></td>
-            <td>{$val.content}</td>
-            <td>{$val.type}</td>
+            <th>id</th>
+            <td>主题</td>
+            <td>内容</td>
+            <td>类型</td>
         </tr>
-    </foreach>
-</table>
+        </thead>
+        <tbody>
+
+        <foreach name="learn_list" item="val" key="k" >
+            <tr>
+                <td>{$k+1}</td>
+                <td><a href="/Learn/create.html?id={$val.id}&from=edit" target="_blank">{$val.theme}</a></td>
+                <td>{$val.content}</td>
+                <td>{$val.type}</td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+</div>
+
 </body>
 </html>

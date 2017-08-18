@@ -5,39 +5,87 @@
     <title>学习新的列表</title>
     <link href="__CSS__/common/reset.css" rel="stylesheet">
     <link href="__CPT__/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="__CPT__/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <style>
         .main_content{
             padding-left: 25px;
             padding-right: 25px;
+        }
+        .main-list caption{
+            font-size: 14px;
+        }
+        .main-search{
+            border-bottom: 1px dotted #999;
+        }
+        .main-search select{
+            height: 22px;
         }
     </style>
 </head>
 <body>
 
 <div class="main_content">
-    <a href="/Learn/create.html" target="_blank" class="create_btn">创建</a>
-    <table class="table" >
-        <caption>学习心得</caption>
-        <thead>
-        <tr>
-            <th>id</th>
-            <td>主题</td>
-            <td>内容</td>
-            <td>类型</td>
-        </tr>
-        </thead>
-        <tbody>
+    <div class="main-search mt10">
+        <form class="form-inline"
+            action="" method="post">
 
-        <foreach name="learn_list" item="val" key="k" >
+            <label class="control-label" for="inputTheme">主题
+                <input name="theme"  type="text"  value="{$detail[0].theme}" class="span2" id="inputTheme"/>
+            </label>
+            <label class="control-label" for="inputType"> 类型
+                <select  name="type" value="{$detail[0].type}"  class="span2"  id="inputType">
+                    <option value="1">开发流程</option>
+                    <option value="2">测试流程</option>
+                    <option value="3">技术小点</option>
+                    <option value="4">工作心得</option>
+                    <option value="5">生活分享</option>
+                </select>
+            </label>
+            <button type="submit" class="btn">搜索</button>
+        </form>
+    </div>
+    <div class="main-list">
+        <a href="/Learn/create.html" target="MainFrame" class="create_btn right mt10 btn btn-primary">创建</a>
+        <table class="table table-bordered" >
+            <caption>学习心得</caption>
+            <thead>
             <tr>
-                <td>{$k+1}</td>
-                <td><a href="/Learn/create.html?id={$val.id}&from=edit" target="_blank">{$val.theme}</a></td>
-                <td>{$val.content}</td>
-                <td>{$val.type}</td>
+                <th width="30">id</th>
+                <th>主题</th>
+                <th>内容</th>
+                <th>类型</th>
+                <th>操作</th>
             </tr>
-        </foreach>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+
+            <foreach name="learn_list" item="val" key="k" >
+                <tr>
+                    <td><input type="checkbox" data-id="{$val.id}">{$k+1}</td>
+                    <td><a href="/Learn/create.html?id={$val.id}&from=edit" target="MainFrame">{$val.theme}</a></td>
+                    <td>{$val.content}</td>
+                    <td>
+                        <if condition="$val.type eq 1">
+                                开发流程
+                            <elseif  condition="$val.type eq 2" />
+                                测试流程
+                            <elseif condition="$val.type eq 3" />
+                                技术小点
+                            <elseif condition="$val.type eq 4" />
+                                工作心得
+                            <else/>
+                                生活分享
+                        </if>
+                    </td>
+                    <td>
+                        <a  class=" btn-text" data-id="{$val.id}">删除</a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </div>
+
 </div>
 
 </body>

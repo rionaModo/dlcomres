@@ -5,6 +5,7 @@
  * ------------------------------ */
 html,
 body,
+head,
 div,
 ul,
 ol,
@@ -161,4 +162,7 @@ body {
   font-size: 14px;
   line-height: 1.45;
   background-color: #fff;
+}
+.mt10 {
+  margin-top: 10px;
 }

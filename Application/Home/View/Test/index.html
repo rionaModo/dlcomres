@@ -1,0 +1,212 @@
+<!-- 重点：loadAreaNode -->
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <!-- 原始地址：//webapi.amap.com/ui/1.0/ui/geo/DistrictExplorer/examples/simple-load.html -->
+    <base href="//webapi.amap.com/ui/1.0/ui/geo/DistrictExplorer/examples/" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>单区域加载</title>
+    <style>
+        html,
+        body,
+        #container {
+            width: 540px;
+            height: 413px;
+            margin: 0px;
+
+        }
+        #container canvas{
+            background-color: #fff;
+        }
+        #container .amap-logo,#container .amap-copyright{
+            display: none!important;
+        }
+    </style>
+</head>
+
+<body>
+<div id="container"></div>
+<script type="text/javascript" src='//webapi.amap.com/maps?v=1.3&key=9a2b593133101a429a0df94fcd5b9d35'></script>
+<!-- UI组件库 1.0 -->
+<script src="//webapi.amap.com/ui/1.0/main.js?v=1.0.10"></script>
+<script type="text/javascript">
+    //创建地图
+    var map = new AMap.Map('container', {
+        cursor: 'default',
+        zoom: 6,
+        features:[]
+    });
+
+
+    addBeiJing();
+    //just some colors
+    var colors = [
+        "#585E6A", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00",
+        "#b82e2e", "#585E6A", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707",
+        "#651067", "#585E6A", "#5574a6", "#585E6A"
+    ];
+
+    AMapUI.loadUI(['geo/DistrictExplorer'], function(DistrictExplorer) {
+
+        //创建一个实例
+        window.districtExplorer = new DistrictExplorer({
+            map: map,
+            eventSupport: true, //打开事件支持
+            preload: [100000] //预加载全国
+        });
+        districtExplorer.clearFeaturePolygons();
+
+        var adcode = 100000;
+
+        districtExplorer.loadAreaNode(adcode, function(error, areaNode) {
+
+            //更新地图视野
+            map.setBounds(areaNode.getBounds(), null, null, true);
+
+            //清除已有的绘制内容
+            districtExplorer.clearFeaturePolygons();
+
+            //绘制子区域
+            districtExplorer.renderSubFeatures(areaNode, function(feature, i) {
+              /*  var marker = new AMap.Marker({  //省市标识
+                    icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+                    position: feature.properties.centroid
+                });
+                marker.setMap(map);*/
+
+                /*districtSearch.search('中国',function(status, result){
+                    //TODO : 按照自己需求处理查询结果
+                })*/
+
+
+                var fillColor = colors[i % colors.length];
+                var strokeColor = colors[colors.length - 1 - i % colors.length];
+                strokeColor="#8D9CB1";
+                return {
+                    cursor: 'default',
+                    bubble: true,
+                    strokeColor: strokeColor, //线颜色
+                    strokeOpacity: 1, //线透明度
+                    strokeWeight: 1, //线宽
+                    fillColor: fillColor, //填充色
+                    fillOpacity: 0.35, //填充透明度
+                };
+            });
+
+            //绘制父区域--中国
+            districtExplorer.renderParentFeature(areaNode, {
+                cursor: 'default',
+                bubble: true,
+                strokeColor: '#8D9CB1', //线颜色
+                strokeOpacity: 1, //线透明度
+                strokeWeight: 1, //线宽
+                fillColor: null, //填充色
+                fillOpacity: 0.35, //填充透明度
+            });
+            map.setFitView(districtExplorer.getAllFeaturePolygons());
+        });
+
+
+
+        //根据Hover状态设置相关样式
+        function toggleHoverFeature(feature, isHover, position) {
+
+
+            var props = feature.properties;
+
+            //更新相关多边形的样式
+            var polys = districtExplorer.findFeaturePolygonsByAdcode(props.adcode);
+            for (var i = 0, len = polys.length; i < len; i++) {
+
+                polys[i].setOptions({
+                    fillOpacity: isHover ? 0.5 : 0.2
+                });
+            }
+        }
+
+        //监听feature的hover事件
+        districtExplorer.on('featureMouseout featureMouseover', function(e, feature) {
+            toggleHoverFeature(feature, e.type === 'featureMouseover',
+                    e.originalEvent ? e.originalEvent.lnglat : null);
+        });
+
+
+    });
+
+
+    /*setTimeout(10,function(){
+        AMap.service('AMap.DistrictSearch', function() {
+            var opts = {
+                subdistrict: 1,   //返回下一级行政区
+                extensions: 'all',  //返回行政区边界坐标组等具体信息
+                level: 'city'  //查询行政级别为 市
+            };
+            //实例化DistrictSearch
+            district = new AMap.DistrictSearch(opts);
+            district.setLevel('district');
+            //行政区查询
+            district.search('朝阳区', function(status, result) {
+                debugger
+                var bounds = result.districtList[0].boundaries;
+                var polygons = [];
+                if (bounds) {
+                    for (var i = 0, l = bounds.length; i < l; i++) {
+                        //生成行政区划polygon
+                        var polygon = new AMap.Polygon({
+                            map: map,
+                            strokeWeight: 1,
+                            path: bounds[i],
+                            fillOpacity: 0.7,
+                            fillColor: '#CCF3FF',
+                            strokeColor: '#CC66CC'
+                        });
+                        polygons.push(polygon);
+                    }
+                    map.setFitView();//地图自适应
+                }
+            });
+        });
+    })*/
+
+    function addBeiJing() {
+        //加载云图层插件
+        AMap.service('AMap.DistrictSearch', function() {
+            var opts = {
+                subdistrict: 1,   //返回下一级行政区
+                extensions: 'all',  //返回行政区边界坐标组等具体信息
+                level: 'city'  //查询行政级别为 市
+            };
+
+            //实例化DistrictSearch
+            district = new AMap.DistrictSearch(opts);
+            district.setLevel('district');
+            //行政区查询
+            district.search('朝阳区', function(status, result) {
+                var bounds = result.districtList[0].boundaries;
+                var polygons = [];
+                if (bounds) {
+                    for (var i = 0, l = bounds.length; i < l; i++) {
+                        //生成行政区划polygon
+                        var polygon = new AMap.Polygon({
+                            map: map,
+                            strokeWeight: 1,
+                            path: bounds[i],
+                            fillOpacity: 0.7,
+                            fillColor: '#CCF3FF',
+                            strokeColor: '#CC66CC'
+                        });
+                        polygons.push(polygon);
+                    }
+                    map.setFitView();//地图自适应
+                }
+            });
+        });
+    }
+
+
+</script>
+</body>
+
+</html>

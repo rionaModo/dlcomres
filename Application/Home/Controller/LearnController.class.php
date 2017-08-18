@@ -3,7 +3,7 @@ namespace Home\Controller;
 use Think\Controller;
 class LearnController extends Controller {
     public function learn_list(){ // 页面数据
-        $learn_list= D('learn_list')->select();
+        $learn_list= D('learn_list')->where('enable=1')->select();
         $this->assign('learn_list', $learn_list);
         $this->display();
     }

@@ -61,7 +61,8 @@
         cursor: 'default',
         zoom: 6,
         features:[],
-        zoomEnable:false
+        zoomEnable:false,
+        dragEnable:false
     });
 
 
@@ -106,98 +107,122 @@
         "#651067", "#585E6A", "#5574a6", "#585E6A"
     ];*/
 
-    AMapUI.loadUI(['geo/DistrictExplorer'], function(DistrictExplorer) {
+    AMapUI.loadUI(['overlay/SimpleMarker'], function(SimpleMarker) {
+        window.SimpleMarker=SimpleMarker;
+        AMapUI.loadUI(['geo/DistrictExplorer'], function(DistrictExplorer) {
 
-        //创建一个实例
-        window.districtExplorer = new DistrictExplorer({
-            map: map,
-            eventSupport: true, //打开事件支持
-            preload: [100000] //预加载全国
+            //创建一个实例
+            window.districtExplorer = new DistrictExplorer({
+                map: map,
+                eventSupport: true, //打开事件支持
+                preload: [100000] //预加载全国
 
-        });
-        districtExplorer.clearFeaturePolygons();
-        setMapStyle('#container')
-        var adcode = 100000;
-
-        districtExplorer.loadAreaNode(adcode, function(error, areaNode) {
-
-            //更新地图视野
-            map.setBounds(areaNode.getBounds(), null, null, true);
-
-            //清除已有的绘制内容
+            });
             districtExplorer.clearFeaturePolygons();
+            setMapStyle('#container')
+            var adcode = 100000;
 
-            //绘制子区域
-            districtExplorer.renderSubFeatures(areaNode, function(feature, i) {
-              /*  var marker = new AMap.Marker({  //省市标识
-                    icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
-                    position: feature.properties.centroid
+            districtExplorer.loadAreaNode(adcode, function(error, areaNode) {
+
+                //更新地图视野
+                map.setBounds(areaNode.getBounds(), null, null, true);
+
+                //清除已有的绘制内容
+                districtExplorer.clearFeaturePolygons();
+
+                //绘制子区域
+                districtExplorer.renderSubFeatures(areaNode, function(feature, i) {
+                    /*  var marker = new AMap.Marker({  //省市标识
+                     icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+                     position: feature.properties.centroid
+                     });
+                     marker.setMap(map);*/
+
+                    /*districtSearch.search('中国',function(status, result){
+                     //TODO : 按照自己需求处理查询结果
+                     })*/
+
+
+
+
+
+                    new SimpleMarker({
+
+                        iconLabel:{
+                            innerHTML:feature.properties.name,
+                            style:{
+                                color:'#fff',
+                                fontSize:'70%'
+                            }
+                        },
+                        iconStyle: '',
+                     //   iconStyle: 'green',
+
+                        map: map,
+                        position: feature.properties.centroid
+                    });
+                    var code=feature.properties.adcode;
+                    var fillColor = colors[code]|| colors[110000];
+
+                    var strokeColor="#8D9CB1";
+
+                    if(code==460000){
+                        debugger
+                    }
+                    return {
+                        cursor: 'default',
+                        bubble: true,
+                        strokeColor: strokeColor, //线颜色
+                        strokeOpacity: 1, //线透明度
+                        strokeWeight: 1, //线宽
+                        fillColor: fillColor, //填充色
+                        //  fillOpacity: 0.8, //填充透明度
+                    };
                 });
-                marker.setMap(map);*/
 
-                /*districtSearch.search('中国',function(status, result){
-                    //TODO : 按照自己需求处理查询结果
-                })*/
-                var code=feature.properties.adcode;
-                var fillColor = colors[code]|| colors[110000];
-
-                var strokeColor="#8D9CB1";
-
-                if(code==460000){
-                    debugger
-                }
-                return {
+                //绘制父区域--中国
+                districtExplorer.renderParentFeature(areaNode, {
                     cursor: 'default',
                     bubble: true,
-                    strokeColor: strokeColor, //线颜色
+                    strokeColor: '#8D9CB1', //线颜色
                     strokeOpacity: 1, //线透明度
                     strokeWeight: 1, //线宽
-                    fillColor: fillColor, //填充色
-                   fillOpacity: 0.8, //填充透明度
-                };
+                    fillColor: null, //填充色
+                    fillOpacity: 0.35, //填充透明度
+                });
+
+                map.setFitView(districtExplorer.getAllFeaturePolygons());
+
             });
 
-            //绘制父区域--中国
-            districtExplorer.renderParentFeature(areaNode, {
-                cursor: 'default',
-                bubble: true,
-                strokeColor: '#8D9CB1', //线颜色
-                strokeOpacity: 1, //线透明度
-                strokeWeight: 1, //线宽
-                fillColor: null, //填充色
-                fillOpacity: 0.35, //填充透明度
-            });
 
-            map.setFitView(districtExplorer.getAllFeaturePolygons());
+
+            //根据Hover状态设置相关样式
+            function toggleHoverFeature(feature, isHover, position) {
+
+
+                var props = feature.properties;
+
+                //更新相关多边形的样式
+                var polys = districtExplorer.findFeaturePolygonsByAdcode(props.adcode);
+                for (var i = 0, len = polys.length; i < len; i++) {
+
+                    polys[i].setOptions({
+                        fillOpacity: isHover ? 0.5 : 0.2
+                    });
+                }
+            }
+
+            /*  //监听feature的hover事件
+             districtExplorer.on('featureMouseout featureMouseover', function(e, feature) {
+             toggleHoverFeature(feature, e.type === 'featureMouseover',
+             e.originalEvent ? e.originalEvent.lnglat : null);
+             });*/
+
 
         });
+    })
 
-
-
-        //根据Hover状态设置相关样式
-        function toggleHoverFeature(feature, isHover, position) {
-
-
-            var props = feature.properties;
-
-            //更新相关多边形的样式
-            var polys = districtExplorer.findFeaturePolygonsByAdcode(props.adcode);
-            for (var i = 0, len = polys.length; i < len; i++) {
-
-                polys[i].setOptions({
-                    fillOpacity: isHover ? 0.5 : 0.2
-                });
-            }
-        }
-
-      /*  //监听feature的hover事件
-        districtExplorer.on('featureMouseout featureMouseover', function(e, feature) {
-            toggleHoverFeature(feature, e.type === 'featureMouseover',
-                    e.originalEvent ? e.originalEvent.lnglat : null);
-        });*/
-
-
-    });
 
 
     /*setTimeout(10,function(){

@@ -18,6 +18,7 @@
             position: absolute;
             top: 150px;
             left: 124px;
+            display: none;
         }
         body{
 
@@ -67,11 +68,13 @@
 
 
     function setMapStyle(container){
-        $(container).css('background','none')
+        $(container).css('background','none');
+        $(container).show();
     }
   //  addBeiJing();
     //just some colors
     var colors ={
+        'default':'#58626c',
         110000:'#58626c',//北京 默认色
         120000:'#5f6c7a',//天津
         130000:'#b5b324',//河北
@@ -98,14 +101,15 @@
         500000:'#a92a2a',//重庆
         420000:'#a92a2a',//湖北
         430000:'#a92a2a',//湖南
-        710000:'#a92a2a',//山东
+     //   710000:'#a92a2a',//山东
        // 340000:'#b5b324',//安徽
     }
-         /*   [
-        "#585E6A", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00",
-        "#b82e2e", "#585E6A", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707",
-        "#651067", "#585E6A", "#5574a6", "#585E6A"
-    ];*/
+    var showAreaName={
+        510000:true,//四川
+        500000:true,//重庆
+        420000:true,//湖北
+        430000:true,//湖南
+    }
 
     AMapUI.loadUI(['overlay/SimpleMarker'], function(SimpleMarker) {
         window.SimpleMarker=SimpleMarker;
@@ -152,17 +156,20 @@
                             innerHTML:feature.properties.name,
                             style:{
                                 color:'#fff',
-                                fontSize:'70%'
+                                fontSize:'70%',
+                                width:'80px',
+                                'textAlign':'left',
+                                top:'20px'
                             }
                         },
                         iconStyle: '',
                      //   iconStyle: 'green',
 
                         map: map,
-                        position: feature.properties.centroid
+                        position: feature.properties.center
                     });
                     var code=feature.properties.adcode;
-                    var fillColor = colors[code]|| colors[110000];
+                    var fillColor = colors[code]|| colors['default'];
 
                     var strokeColor="#8D9CB1";
 

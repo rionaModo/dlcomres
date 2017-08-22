@@ -27,13 +27,14 @@
 <div class="main_content">
     <div class="main-search mt10">
         <form class="form-inline"
-            action="" method="post">
+            action="/Learn/learn_search.html" method="post" >
 
             <label class="control-label" for="inputTheme">主题
-                <input name="theme"  type="text"  value="{$detail[0].theme}" class="span2" id="inputTheme"/>
+                <input name="theme"  type="text"  value="{$_GET.theme}" class="span2" id="inputTheme"/>
             </label>
             <label class="control-label" for="inputType"> 类型
                 <select  name="type" value="{$detail[0].type}"  class="span2"  id="inputType">
+                    <option value="">所有类型</option>
                     <option value="1">开发流程</option>
                     <option value="2">测试流程</option>
                     <option value="3">技术小点</option>

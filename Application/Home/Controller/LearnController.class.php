@@ -18,13 +18,6 @@ class LearnController extends Controller {
         $Page       = getpage($count,$limit,$page);// 实例化分页类 传入总记录数和每页显示的记录数(25)
         $this->assign('page',$Page);// 赋值分页输出
         $this->assign('learn_list', $learn_list);
-
-     //   $learn_res= D('learn_list');
-
-      //  $detail= $learn_res->where("theme like '%$theme%'")->select();
-
-
-
         $this->display();
     }
     public function create(){ //创建查看页面

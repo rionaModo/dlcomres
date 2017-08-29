@@ -26,13 +26,15 @@ method="post"
     <div class="control-group">
         <label class="control-label" for="inputType"> 类型</label>
         <div class="controls">
+            <select  name="type" value="{$detail[0].type}"    id="inputType">
 
-            <select  name="type" value="{$detail[0].type}" id="inputType">
-                <option value="1">开发流程</option>
-                <option value="2">测试流程</option>
-                <option value="3">技术小点</option>
-                <option value="4">工作心得</option>
-                <option value="5">生活分享</option>
+                <option value="1"
+                <if condition="$detail['0']['type']  eq 1"> selected</if>
+                >开发流程</option>
+                <option value="2" <if condition="$detail['0']['type']  eq '2'"> selected</if> >测试流程</option>
+                <option value="3" <if condition="$detail['0']['type']  eq 3"> selected</if> >技术小点</option>
+                <option value="4" <if condition="$detail['0']['type']  eq 4"> selected</if> >工作心得</option>
+                <option value="5" <if condition="$detail['0']['type']  eq 5"> selected</if> >生活分享</option>
             </select>
         </div>
     </div>

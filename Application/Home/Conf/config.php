@@ -1,6 +1,7 @@
 <?php
 
-define('BASE_URL','http://192.168.100.67:6600');
+//define('BASE_URL','http://192.168.100.67:6600');
+define('BASE_URL','');
 return array(
     'TMPL_PARSE_STRING'  => [
         '__CSS__' =>  BASE_URL.'/resoures/css',

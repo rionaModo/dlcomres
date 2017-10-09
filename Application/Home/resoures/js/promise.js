@@ -2,10 +2,11 @@
  * Created by danlu on 2017/9/28.
  */
 
-
+var m=0;
 function Promise(call){
     var that=this;
     this.sever=30;
+    this.sort=m++;
     this.timeout=3000;
     this._status;
     this._cResolve;
@@ -27,21 +28,33 @@ function Promise(call){
         resolve:undefined,
         reject:undefined
     };
+
     function def(r,j){
        var that=this;
         r.call(this);
     }
-    call=call||def;
-    call(function(){
-        that._fullfilled.call(that)
-    },function(){
-        that._rejected.call(that)
-    });
+    this._call=call;
+    this.init();
     return this;
 };
 
 
 Promise.prototype = {
+    constructor:Promise,
+    init:function(){
+        var that=this;
+        setTimeout(function(){
+            that._excCall.call(that)
+        },0)
+    },
+    _excCall:function(){
+        var that=this;
+        that._call&&that._call(function(p){
+            that._fullfilled.call(that,p);
+        },function(p){
+            that._rejected.call(that,p);
+        });
+    },
     then:function(resolve,reject){
         this.callParam.resolve=resolve;
         this.callParam.reject=reject;
@@ -52,37 +65,44 @@ Promise.prototype = {
     },
     all:function(promises){
         var p=new Promise();
+        p.param={
+            resolve:[],
+            reject:[]
+        };
         p.icon=3;
-        (function(reject,resolve){
+        p._call=function(reject,resolve){
             var that=this;
             that.promises=promises;
             that.proS=[];
             for(var i= 0,len=promises.length;i<len;i++){
                 var item=promises[i];
-                item.icon=i;
                 if(typeof item._status!="undefined"){
                     that.proS.push(item._status);
                     if(item._status=='reject'){
                         that._rejected();
+
                         return
                     }
+                    that.param.resolve.push(item.param.resolve);
                     if(that.proS.length==that.promises.length){
-                        that._fullfilled();
+                        that._fullfilled(that.param.resolve);
                     }
                 }else{
                     item._setOver(function(){
-                        that.proS.push(item._status);
-                        if(item._status=='reject'){
+                        that.proS.push(this._status);
+                        if(this._status=='reject'){
                             that._rejected();
                             return
                         }
+                        that.param.resolve.push(this.param.resolve);
                         if(that.proS.length==that.promises.length){
-                            that._fullfilled();
+                            that._fullfilled(that.param.resolve);
                         }
                     });
                 }
             }
-        }).call(p,p._fullfilled, p._rejected);
+        };
+        p.init.call(p);
         return p;
 
     },
@@ -96,14 +116,15 @@ Promise.prototype = {
     _over:function(){
 
     },
-    resolve:function(param){  //需要在构建
-        if(this.isPromise(param))return
-        return new Promise(function(r,j){param
+    resolve:function(obj){  //需要在构建
+        if(this.isPromise(obj))return
+        return new Promise(function(r,j){
+            obj
         ;
             r();
         });
     },
-    reject:function(param){
+    reject:function(){
        var p= new Promise();
         p._rejected();
         return p;
@@ -114,6 +135,13 @@ Promise.prototype = {
         this.param.resolve=p;
         var result=this._handle(p);
         this.paramResult.resolve=result;
+        if(this.isPromise(result)){
+            result.then(this.newPromise.callParam.resolve,this.newPromise.callParam.resolve);
+            result.newPromise=this.newPromise.newPromise;
+            this.newPromise=result;
+        }else if(this.newPromise){
+            this.newPromise._fullfilled(result);
+        }
         return result;
     },
     /*修改该实例的状态--失败*/
@@ -122,16 +150,23 @@ Promise.prototype = {
         this.param.reject=p;
         var result=this._handle(p);
         this.paramResult.reject=result;
+        if(this.isPromise(result)){
+            result.then(this.newPromise.callParam.resolve,this.newPromise.callParam.resolve);
+            result.newPromise=this.newPromise.newPromise;
+            this.newPromise=result;
+        }else if(this.newPromise){
+            this.newPromise._rejected(result);
+        }
         return result;
     },
     _cResolve:function(){
         if(typeof this.callParam.resolve!='undefined'){
-            return  this.callParam.resolve(this.param.resolve);
+            return  this.callParam.resolve.apply(this,this.param.resolve);
         }
     },
      _cReject:function(p){
          if(typeof this.callParam.reject!='undefined'){
-             return  this.callParam.resolve(this.param.reject);
+             return  this.callParam.reject.apply(this,this.param.reject);
          }
      },
 
@@ -139,30 +174,18 @@ Promise.prototype = {
     _handle:function(p){
         if(typeof this._status=='undefined')return;
         /*上次存在的处理*/
-
-
-
-
-
-
-
-
-
-
-
-        
-
         var result;
         if(this._status=='resolve'){
             result=this._cResolve(p);
         }else{
             result=this._cReject(p);
         }
+
         this._over();
         return result;
     },
     _nextHandle:function(){}
 };
 
-Promise.prototype.constructor = Promise;
+
 Promise.all=Promise.prototype.all;

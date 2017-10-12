@@ -192,4 +192,345 @@
     };
     Promise.all=Promise.prototype.all;
     window.Promise=Promise;
-})(window)
+})(window);
+
+/*
+* dlPager:用于丹露交易平台的分页插件
+* eg:html 需添加<div page-total="true"  id="page-content"  page-first="true" page-last="true"   page-prev="true" page-next="true" page-search='true' page-list='600' page-size='10' page-current='5' every-page='10,20,30,40'></div>
+*    new dlPager({contentId:'page-content',loading:function(obj){}})
+* param:obj={
+* pageSearch:false,//是否添加跳转到某页，默认false
+* pagePrev:true,//是否显示上一页，默认true
+* pageNext:true,//是否显示下一页，默认true
+* pageFirst:false,//是否显示第一页，默认false
+* pageLast:false,//是否显示最后一页，默认false
+* pageTotal:true,//是否显示总页数，默认true
+* pageSize:20,//每页的条数，默认20
+* everyPage:[10,20,30,40],//下拉的分页条数，只有在pageSearch=true时出现默认[10,20,30,40]，通过属性传入时需要添加属性 every-page='10,20,30,40'
+* loading:function(){},//当前页改变后的回调
+* pageList:0//数据的总条数
+* }
+*
+* 注：dlPager的参数可通过dom的属性（attr）与和对象实例化的时候（param）进行穿参，优先级param>attr
+*
+*
+* */
+
+(function(window){
+    var dlPager=function(obj){
+        var def={
+            pageSearch:false,//是否添加跳转到某页，默认false
+            pagePrev:true,//是否显示上一页，默认true
+            pageNext:true,//是否显示下一页，默认true
+            pageFirst:false,//是否显示第一页，默认false
+            pageLast:false,//是否显示最后一页，默认false
+            pageTotal:true,//是否显示总页数，默认true
+            pageSize:20,//每页的条数，默认20
+            everyPage:[10,20,30,40],//下拉的分页条数，
+            loading:function(){},//当前页改变后的回调
+            pageList:0,
+            pageCurrent:1
+        }
+        if(this.isEmpty(obj.contentId)){
+            return
+        };
+        this.content=document.getElementById(obj.contentId);
+        var attrObj={
+            pageSearch:this.attr(this.content,'page-search')=='false'?false:true,//跳转到某页
+            pagePrev:this.attr(this.content,'page-prev')=='false'?false:true,//是否显示上一页
+            pageNext:this.attr(this.content,'page-next')=='false'?false:true,//是否显示下一页
+            pageFirst:this.attr(this.content,'page-first')=='true'?true:false,//是否显示第一页
+            pageLast:this.attr(this.content,'page-last')=='true'?true:false,//是否显示最后一页
+            pageTotal:this.attr(this.content,'page-total')=='false'?false:true,//是否显示总页数
+           // pageAll:
+            pageList:this.attr(this.content,'page-list')?parseInt(this.attr(this.content,'page-list')):0 //数据总条数
+        }
+        this.attr(this.content,'page-size')?attrObj.pageSize=parseInt(this.attr(this.content,'page-size')):'';
+        this.attr(this.content,'page-current')?attrObj.pageCurrent=parseInt(this.attr(this.content,'page-current')):1;
+        var list=this.attr(this.content,'every-page')?this.attr(this.content,'every-page'):null;
+        list?attrObj.everyPage=list.split(','):'';
+        this.joinObj(def,attrObj,obj);
+        if (def.pageList % def.pageSize == 0) {
+            def.pages = def.pageList / def.pageSize;
+        }else {
+            def.pages = parseInt(def.pageList /def.pageSize)+1;
+        }
+        ;
+        this.param=def;
+        this._init()
+    }
+    dlPager.prototype={
+        constructor:dlPager,
+        _init:function(){
+            this.createPage();
+        },
+        createPage:function(){
+            this.content.innerHTML=''
+            var that=this;
+            var def=this.param;
+            var pageCurrent=def.pageCurrent;
+            var totalPage=def.pages;
+            var p=this.createDom('div','','page-content');
+            var el;
+            if(def.pageFirst){
+                var first=this.createDom('span','首页','pager-first pager-item');
+                that.addEvent(first,'click',that.addclick(1));
+                p.appendChild(first);
+            }
+            if(def.pagePrev){
+                var prev=this.createDom('span','','pager-prev pager-item pager-img');
+                if(def.pageFirst){
+                    var prev=this.createDom('span','上一页','pager-prev pager-item');
+                }
+                if(def.pageCurrent==1)this.addClass(prev,'pager-disabled');
+                if(def.pageFirst||(!def.pageFirst&&pageCurrent!=1)){
+                    p.appendChild(prev);
+                }
+                !this.hasClass(prev,'pager-disabled')&&that.addEvent(prev,'click',that.addclick(pageCurrent-1));
+            }
+            var fragment=document.createDocumentFragment()
+            if(pageCurrent-1>3){
+                 el=this.createDom('span','1','pager-item');
+                that.addEvent(el,'click',that.addclick(1));
+                p.appendChild(el);
+                el=this.createDom('span','…','pager-more');
+                p.appendChild(el);
+                if(totalPage-pageCurrent+2<4){
+                    for(var i= totalPage-4;i<pageCurrent-2;i++){
+                        el=this.createDom('span',i,'pager-item');
+                        (function (i){
+                            that.addEvent(el,'click',that.addclick(i));
+                        })(i)
+                        if(i==pageCurrent){
+                            this.addClass(el,'pager-current');
+                        }
+                        p.appendChild(el);
+                    }
+                }
+                el=this.createDom('span',pageCurrent-2,'pager-item');
+                that.addEvent(el,'click',that.addclick(pageCurrent-2));
+                p.appendChild(el);
+                el=this.createDom('span',pageCurrent-1,'pager-item');
+                that.addEvent(el,'click',that.addclick(pageCurrent-1));
+                p.appendChild(el);
+                el=this.createDom('span',pageCurrent,'pager-item pager-current');
+                that.addEvent(el,'click',that.addclick(pageCurrent));
+                p.appendChild(el);
+            }else {
+                var num=5;
+                for(var i= 1;i<num+1;i++){
+                    el=this.createDom('span',i,'pager-item');
+                    if(i==pageCurrent){
+                        this.addClass(el,'pager-current');
+                    }
+                    (function (i){
+                        that.addEvent(el,'click',that.addclick(i));
+                    })(i)
+                    p.appendChild(el);
+                }
+            }
+            if(totalPage-pageCurrent>2){
+                if(pageCurrent>=5) {
+                    el = this.createDom('span', pageCurrent + 1, 'pager-item');
+                    that.addEvent(el, 'click', that.addclick(pageCurrent + 1));
+                    p.appendChild(el);
+                    el = this.createDom('span', pageCurrent + 2, 'pager-item');
+                    that.addEvent(el, 'click', that.addclick(pageCurrent + 1));
+                    p.appendChild(el);
+                }
+                el=this.createDom('span','…','pager-more');
+                p.appendChild(el);
+                el=this.createDom('span',totalPage,'pager-item');
+                that.addEvent(el,'click',that.addclick(totalPage));
+                p.appendChild(el);
+            }else{
+                var init=pageCurrent+1;
+                for(var i= init;i<totalPage+1;i++){
+                    el=this.createDom('span',i,'pager-item');
+                    (function (i){
+                        that.addEvent(el,'click',that.addclick(i));
+                    })(i)
+                    if(i==pageCurrent){
+                        this.addClass(el,'pager-current');
+                    }
+                    p.appendChild(el);
+                }
+            }
+
+            if(def.pageNext){
+                var next=this.createDom('span','','pager-next pager-item pager-img');
+                if(def.pageLast){
+                    var next=this.createDom('span','下一页','pager-next pager-item');
+                }
+                if(def.pageCurrent==totalPage)this.addClass(next,'pager-disabled');
+                if(def.pageLast||(!def.pageLast&&pageCurrent!=totalPage)){
+                    p.appendChild(next);
+                }
+                !this.hasClass(next,'pager-disabled')&&that.addEvent(next, 'click', that.addclick(pageCurrent + 1));
+            }
+            if (def.pageLast){
+                var last=this.createDom('span','尾页','pager-last pager-item');
+                that.addEvent(last, 'click', that.addclick(totalPage));
+                p.appendChild(last);
+            }
+            this.addTotalPage(p);
+            this.addPageSearch(p);
+            this.addSizeChange(p);
+            this.content.appendChild(p);
+        },
+        pageSizeChange:function(pageSize){
+            var def=this.param;
+            if(this.isEmpty(pageSize))return;
+            def.pageSize=pageSize;
+            if (def.pageList % def.pageSize == 0) {
+                def.pages = def.pageList / def.pageSize;
+            }else {
+                def.pages = parseInt(def.pageList /def.pageSize)+1;
+            }
+            def.pageCurrent=1;
+            this.createPage(this.pageCurrent);
+        },
+        addclick:function(page){
+            var that=this;
+            var page=page;
+            return function (){
+                if(page>that.param.pages){
+                    page=that.param.pages;
+                }
+                if(page<1){
+                    page=1;
+                }
+                that.param.pageCurrent=page;
+                that.createPage();
+                that.param.loading(that.param)
+            }
+        },
+        pageChange:function(pageCurrent){
+            var def=this.param;
+            def.pageCurrent=pageCurrent;
+            this.createPage(this.pageCurrent);
+        },
+        addTotalPage:function(p){
+            var def=this.param;
+            if(!def.pageTotal||this.isEmpty(p))return;
+            var el=this.createDom('span','共'+def.pages+'页','pager-total');
+            p.appendChild(el);
+        },
+        addPageSearch:function(p){
+            var that=this;
+            var def=this.param;
+            if(!def.pageSearch||this.isEmpty(p))return;
+            var html='<label>跳转到第</label> <input type="number" min="1"  class="pager_input"> <label>页</label><button type="pager-button" class="laypage_btn">确定</button>'
+            var el=this.createDom('span',html,'pager-search');
+            var input=el.getElementsByTagName('input')[0];
+            var btn=el.getElementsByTagName('button')[0];
+            this.addEvent(input,'keyup',function(){
+                this.value=this.value.replace(/\D/, '');
+            });
+            this.addEvent(btn,'click',function(){
+                var v= input.value;
+                if(!that.isEmpty(v)){
+                    that.pageChange(parseInt(v));
+                    that.param.loading(that.param)
+                }
+            });
+            p.appendChild(el);
+        },
+        addSizeChange:function(p){
+            var that=this;
+            var def=that.param;
+            var html=' <span>每页显示</span><select class="selectPageSize">'
+            if(!def.pageSearch||this.isEmpty(p))return;
+            var everyPage=def.everyPage;
+            var pageSize=def.pageSize;
+            for(var i= 0,len=everyPage.length;i<len;i++){
+                var item=everyPage[i];
+                if(pageSize==item){
+                    html+='<option value="'+item+'" selected="selected">'+item+'</option>'
+                }
+                else {
+                    html+='<option value="'+item+'" >'+item+'</option>'
+                }
+            }
+            html+='</select><span>条</span>';
+            var el=this.createDom('div',html,'selectPage');
+            var select=el.getElementsByTagName('select')[0];
+            this.addEvent(select,'change',function(){
+                var num= this.selectedIndex;
+                var v=this.options[num].value;
+                if(!that.isEmpty(v)){
+                    that.pageSizeChange(parseInt(v));
+                    that.param.loading(that.param)
+                }
+            });
+            p.appendChild(el);
+        },
+        isEmpty:function (obj){
+            if (typeof obj == 'undefined' || obj == null || obj == {} || obj == '' || obj.length <= 0)return true;
+            return false
+        },
+        attr:function(domObj,attrName){
+            var name=domObj.getAttribute(attrName);
+            if(this.isEmpty(name))return null
+            return name;
+        },
+        joinObj:function(){
+          var target= arguments[0],
+            len=arguments.length,
+              copy={};
+
+            if(len==1){
+                target=this;
+
+            }
+            for(var i= 0;i<len;i++){
+                copy=arguments[i];
+                for(var key in copy){
+                    !this.isEmpty(copy[key])&&(target[key]=copy[key]);
+                }
+            }
+            return target;
+        },
+        createDom:function(tagName,html,className){
+            var dom= document.createElement(tagName)
+            dom.innerHTML=html;
+            if(className)this.addClass(dom,className);
+            return dom;
+        },
+        hasClass : function(element, className) {
+            var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+            return element.className.match(reg);
+        },
+        addClass:function(element, className) {
+            if (!this.hasClass(element, className)){
+                element.className += " "+className;
+            }
+        },
+        removeClass : function(element, className) {
+            if (this.hasClass(element, className)) {
+                var reg = new RegExp('(\s|^)'+className+'(\s|$)');
+                element.className = element.className.replace(reg,' ');
+            }
+        },
+       addEvent:function (el, type, fn) {
+            if (document.addEventListener) {
+                if(!el){
+                    return false;
+                }
+                el.addEventListener(type, fn, false);
+            } else {
+                if(!el){
+                    return false;
+                }
+                el.attachEvent('on' + type, function () {
+                    return fn.call(el, window.event);
+                });
+            }
+        }
+    }
+
+    window.dlPager=dlPager;
+})(window);
+new dlPager({contentId:'page-content',loading:function(obj){
+    console.log(obj.pageCurrent);
+}})

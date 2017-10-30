@@ -1,0 +1,33 @@
+.biankuang{
+    border-bottom:1px dashed #000000 ;
+    margin: auto;
+    width: 980px;
+    height:45px;
+}
+
+.chuangjian{
+    width: 980px;
+    margin: auto;
+}
+#chuangjian{
+    float: right;
+    margin: 10px;
+    padding: 10px;
+    background-color: #35b5eb;
+}
+
+.xuexi{
+   width: 980px;
+    margin: auto;
+}
+#xinde{
+    padding: 20px 0 0 440px;
+}
+.biaoge table
+{
+    border-collapse:collapse;
+}
+.biaoge table th{
+    padding: 5px 150px 5px 10px;
+    border: 1px solid #cccccc;
+}

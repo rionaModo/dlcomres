@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="__CSS__/xiaohao/learn_list.css" rel="stylesheet">
+
+
+</head>
+<body>
+<div class="chuangjian">
+    <div class="biankuang">
+        主题：<input id="code-zhuti" type="text" />
+        类型<input id="code-leixing" type="text" />
+        <input type="button" id="baocun" value="保存" />
+    </div>
+    <input type="button"  onclick="open1()"  id="chuangjian" value="创建" >
+</div>
+<div class="xuexi">
+    <p id="xinde">学习心得</p>
+    <div class="biaoge">
+      <table>
+          <thead>
+          <tr>
+              <th>id</th>
+              <th>主题</th>
+              <th>类型</th>
+              <th>内容</th>
+              <th style="color:#35b5eb">操作</th>
+          </tr>
+          </thead>
+          <tbody id="insertHTML">
+
+
+          </tbody>
+
+
+      </table>
+    </div>
+</div>
+</body>
+</html>
+
+
+<script type="text/javascript" src="__JS__/jquery-3.2.1.min.js"></script>
+<script type="application/javascript" src="__JS__/xiaohao/learn_list.js"></script>
+

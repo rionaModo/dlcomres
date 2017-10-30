@@ -1,4 +1,4 @@
-#删除接口
+#删除接口#
 接口：/Xiaohao/learn_delete.php
 method:POST
 data:{id:''}

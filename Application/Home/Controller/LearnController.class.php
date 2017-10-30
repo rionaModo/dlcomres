@@ -34,8 +34,18 @@ class LearnController extends Controller {
     function learn_insert(){ //新增数据
         $learn_res= D('learn_list');
         $ndate=date("Y-m-d H:i:s");
+        if(empty(I('post.theme'))){
+         exit('{"status":1,"msg":"主题不能为空"}');
+        }
+         if(empty(I('post.type'))){
+            exit('{"status":2,"msg":"类型不能为空"}');
+         }
+         if(empty(I('post.content'))){
+              exit('{"status":3,"msg":"内容不能为空"}');
+         }
         $data=array(id=>guid(),'theme'=>I('post.theme'),'content'=>I('post.content'),type=>I('post.type'),create_time=>$ndate);
          $learn_res->add($data);
+
         header("Location:/Learn/learn_list.html");
     }
 

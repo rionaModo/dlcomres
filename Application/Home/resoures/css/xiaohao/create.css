@@ -1,0 +1,32 @@
+.sss{
+    margin: 20px 0 0 300px;
+}
+
+ input#code-kuang{
+     border-radius:5px;
+     width: 200px;
+     height:25px
+ }
+ select#inputType{
+     border-radius: 5px;
+     width: 200px;
+     height:25px;
+ }
+ input#code-leixing{
+     border-radius: 5px;
+     width: 200px;
+     height:25px;
+     margin: 10px 0 20px 100px;
+ }
+
+ input#code-ww{
+     border-radius:5px;
+     width: 200px;
+     height: 50px;
+ }
+ input#sub{
+      margin: 10px 0 20px 135px;
+      border-radius:5px;
+     padding:5px 10px;
+     background-color:#f5f5f5;
+  }

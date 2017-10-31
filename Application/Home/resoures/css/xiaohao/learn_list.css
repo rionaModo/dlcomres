@@ -9,10 +9,21 @@
     width: 980px;
     margin: auto;
 }
+ select#code-leix{
+    width: 100px;
+}
+#code-chaxun{
+    padding: 5px;
+}
+#chaxun{
+    height: 30px;
+    margin: 10px;
+    padding:5px 20px;
+}
 #chuangjian{
     float: right;
     margin: 10px;
-    padding: 10px;
+    padding:5px 10px;
     background-color: #35b5eb;
 }
 

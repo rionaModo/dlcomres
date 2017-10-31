@@ -61,7 +61,7 @@ else if ($('#inputType').val()=='') {
                 {
                     title:'信息提示:',
                     icon:1,
-                    btn: ['按钮一'] //可以无限个按钮
+                    btn: ['确定'] //可以无限个按钮
                 },
                 function(index, layero){
                     op();
@@ -88,7 +88,6 @@ function test(a,b,c){}
 test(1,2,3);
 var  obj={
     url: '/Xiaohao/learn_insert.php',
-    data: data,
     type: 'POST',
     dataType: 'json',
     contentType: 'application/x-www-form-urlencoded',

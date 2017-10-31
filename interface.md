@@ -10,10 +10,10 @@ content-type:application/x-www-form-urlencoded
 
 
 #查询接口#
-接口：/Xiaohao/learn_list.php
+接口：/Xiaohao/create_list.php
 method:GET
 入参:theme:''  //主题
      type:'',  //类型  数字类型的 1、2、3、4
-例子：/Xiaohao/learn_list.php?theme=肖红&type=1
+例子：/Xiaohao/create_list.php?theme=肖红&type=1
 接口返回：[{},{}]
 

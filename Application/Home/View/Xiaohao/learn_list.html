@@ -11,10 +11,18 @@
 <div class="chuangjian">
     <div class="biankuang">
         主题：<input id="code-zhuti" type="text" />
-        类型<input id="code-leixing" type="text" />
-        <input type="button" id="baocun" value="保存" />
+        类型:<select name="type" value="" id="code-leix">
+            <option value="">请选择</option>
+            <option value="1">开发流程</option>
+            <option value="2">测试流程</option>
+            <option value="3">技术小点</option>
+            <option value="4">工作心得</option>
+            <option value="5">生活分享</option>
+        </select>
+        <input type="button"  onclick="ope()"  id="chaxun" value="查询" />
     </div>
-    <input type="button"  onclick="open1()"  id="chuangjian" value="创建" >
+
+    <input type="button"  onclick="open1()"  id="chuangjian" value="创建" />
 </div>
 <div class="xuexi">
     <p id="xinde">学习心得</p>
@@ -43,5 +51,6 @@
 
 
 <script type="text/javascript" src="__JS__/jquery-3.2.1.min.js"></script>
+<script src="__JS__/layer-v3.1.0/layer/layer.js"></script>
 <script type="application/javascript" src="__JS__/xiaohao/learn_list.js"></script>
 

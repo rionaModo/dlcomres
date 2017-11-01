@@ -42,13 +42,14 @@ class XiaohaoController extends Controller {
        $sql!=''?$sql=$sql." AND enable=1":$sql=$sql=$sql.'enable=1';
        $limit=10;
        $pageStart=$limit*($page-1);
-       $pageStart=0;
        $learn_list= D('learn_list')->where($sql)->order('create_time desc')->limit($pageStart.','.$limit)->select();
        $count      =  D('learn_list')->where($sql)->count();// 查询满足要求的总记录数
-      // $Page       = getpage($count,$limit,$page);// 实例化分页类 传入总记录数和每页显示的记录数(25)
-      // $this->assign('page',$Page);// 赋值分页输出
-      // $this->assign('learn_list', $learn_list);
-       $this->ajaxReturn($learn_list, 'JSON');
+
+       $learn_data=array(
+         total=>$count,
+         data_list=>$learn_list
+       );
+       $this->ajaxReturn($learn_data, 'JSON');
 
           }
      function learn_insert(){ //新增数据

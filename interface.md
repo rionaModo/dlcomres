@@ -14,7 +14,11 @@ content-type:application/x-www-form-urlencoded
 method:GET
 入参:theme:''  //主题
      type:'',  //类型  数字类型的 1、2、3、4
+     p:1   //分页  1,2，3
 例子：/Xiaohao/create_list.php?theme=肖红&type=1
-接口返回：[{},{}]
+接口返回：{
+  total：22， 总页数
+  data_list:[{},{}]  数据
+}
 
 p

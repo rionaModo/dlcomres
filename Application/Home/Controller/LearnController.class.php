@@ -62,4 +62,15 @@ class LearnController extends Controller {
         $type=I('post.type');
         header("Location:/Learn/learn_list.html?theme=$theme&type=$type");
     }
+    function learn_delete(){ //删除数据
+        $id=I('post.id');
+        $learn_res= D('learn_list');
+        if(empty(I('post.id'))){
+            exit('{"status":1,"msg":"id不能为空"}');
+        }
+        $data=array('enable'=>0);
+        $map['id']=$id;
+        $detail= $learn_res->where($map)->save($data);
+        exit('{"status":0,"msg":"保存成功"}');
+    }
 }

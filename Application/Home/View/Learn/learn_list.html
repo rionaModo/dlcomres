@@ -6,7 +6,10 @@
     <link href="__CSS__/common/reset.css" rel="stylesheet">
     <link href="__CPT__/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="__CPT__/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-    <script type="application/javascript" src="__JS__/promise.js"></script>
+    <script type="text/javascript" src="__JS__/promise.js"></script>
+    <script type="text/javascript"  src="__JS__/jquery_1.9.1.js"></script>
+    <script type="text/javascript"  src="__CPT__/layer-v3.1.0/layer.js"></script>
+
     <style>
         .main_content{
             padding-left: 25px;
@@ -86,7 +89,7 @@
                         </if>
                     </td>
                     <td>
-                        <a  class=" btn-text" data-id="{$val.id}">删除</a>
+                        <a  class=" btn-text" data-id="{$val.id}"  onclick="deleteInfo('{$val.id}')">删除</a>
                     </td>
                 </tr>
             </foreach>
@@ -103,3 +106,38 @@
 
 </body>
 </html>
+
+<script>
+
+
+    function deleteInfo(id) {
+
+        //询问框
+        layer.confirm('您是如何看待前端开发？', {
+            btn: ['确认','取消'], //按钮,
+            icon: 3,
+            shade: 0
+        }, function(index,dom){
+            $.ajax({
+                url: '/Learn/learn_delete.php',
+                type: 'POST',
+                data: {id: id},
+                contentType:'application/x-www-form-urlencoded',
+                dataType: 'json',
+                success:function(data) {
+                    if(data.status==0){
+                        layer.close(index);
+                        window.location.reload();
+                    }else{
+                        layer.close(index);
+                        layer.msg('删除失败！', {icon: 1});
+                    }
+
+                }
+            });
+        }, function(){
+            return true;
+        });
+
+    }
+</script>

@@ -107,4 +107,19 @@ class XiaohaoController extends Controller {
          $detail= $learn_res->where($map)->save($data);
          exit('{"status":0,"msg":"保存成功"}');
      }
+    function theme_isrepeat(){ //删除数据
+        $theme=I('post.theme');
+        $learn_res= D('learn_list');
+        if(empty(I('post.theme'))){
+            exit('{"status":3,"msg":"主题不能为空"}');
+        }
+        $map['theme']=$theme;
+        $detail= $learn_res->where($map)->select();
+        if(count($detail)>0){
+            exit('{"status":1,"msg":"主题重复"}');
+        }else{
+            exit('{"status":0,"msg":"主题不重复"}');
+        }
+
+    }
 }

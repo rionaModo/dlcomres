@@ -28,6 +28,6 @@ method:POST
 入参:{theme:''}//主题
 content-type:application/x-www-form-urlencoded
 接口返回：json格式
-         {"status":0,     //0表示bu不重复，1表示重复
+         {"status":0,     //0表示不重复，1表示重复
           "msg":"保存成功"
           }

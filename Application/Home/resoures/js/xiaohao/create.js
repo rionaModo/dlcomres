@@ -110,3 +110,27 @@ layer.confirm('纳尼？',p, function(index, layero){
 }, function(index){
     //按钮【按钮二】的回调
 });
+
+//参数为当前页
+ajaxTest(1);
+
+function ajaxTest(num) {
+    $.ajax({
+        url: "table.json",
+        type: "get",
+        data: {},
+        dataType: "json",
+        success: function(data) {
+            console.log(data);
+            //分页
+            $("#page").paging({
+                pageNo: num,
+                totalPage: data.totalPage,
+                totalSize: data.totalSize,
+                callback: function(num) {
+                    ajaxTest(num)
+                }
+            })
+        }
+    })
+}

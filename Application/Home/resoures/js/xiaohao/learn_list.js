@@ -54,7 +54,7 @@ function getList(data,call){
                     +'<td>'+list.theme+'</td>'
                     +'<td>'+ty+'</td>'
                     +'<td>'+list.content+'</td>'
-                    +'<td style="color:#35b5eb" class="shanchu" onclick="deleteInfo(\''+list.id+'\') ">删除</td>'
+                    +'<td style="color:#35b5eb" class="shanchu" ><span style="margin: 0px 75px 0px 0px" onclick="deleteInfo(\''+list.id+'\') ">删除</span><a href="/Xiaohao/dgb.html?id='+list.id+'" style="text-decoration: none" onclick="edit(\''+list.id+'\')">修改</a></td>'
                     +'</tr>';
             }
             $('#insertHTML').html(html);
@@ -85,11 +85,11 @@ function ope(){
 */
 
 
-
     var data= {
         theme:$('#code-zhuti').val(),
         type:$('#code-leix').val(),
     }
+
     getList(data)
 
    /* $.ajax({
@@ -197,6 +197,9 @@ getList({});
     });
 }*/
 
+
+
+
 function deleteInfo(id) {
         layer.confirm('你确定删除?',
         {icon: 3,
@@ -235,3 +238,122 @@ function deleteInfo(id) {
         }*/
 }
 
+function edit() {
+    var data= {
+        theme: $('#code-kuang').val(),
+        type: $('#inputType').val(),
+        content: $('#code-ww').val(),
+        id: ''
+    }
+        $.ajax({
+            url: '/Xiaohao/create_list.php',
+            type: 'get',
+            dataType: 'json',
+            data: data,
+            success:function ww(response, status) {
+                    var data = response.status;
+                    if (data == 1) {
+                        layer.alert('主题不能为空！',
+                            {
+                                title: '信息提示:',
+                                icon: 2
+                            }
+                        );
+                    } else if (data == 2) {
+                        layer.alert('类型不能为空！',
+                            {
+                                title: '信息提示:',
+                                icon: 2
+                            }
+                        );
+                    } else if (data == 3) {
+                        layer.alert('内容不能为空！',
+                            {
+                                title: '信息提示:',
+                                icon: 2
+                            }
+                        );
+                    } else if (data == 4) {
+                        layer.alert('id不能为空！',
+                            {
+                                title: '信息提示:',
+                                icon: 2
+                            }
+                        );
+                    } else if (data == 0) {
+
+
+                        layer.confirm('保存成功!',
+                            {
+                                title: '信息提示:',
+                                icon: 1,
+                                btn: ['确定'],
+                            }
+                        )
+                    }
+
+            }
+        })
+    }
+
+
+
+   /* $.ajax({
+        url:'/Xiaohao/create_list.php',
+        type:'get',
+        dataType:'json',
+        data:{t:Math.random()},
+        success:function(data) {
+            if(data.status==0){
+                layer.close(index);
+                window.location.reload();
+            }else{
+                layer.close(index);
+                layer.msg('删除失败！', {icon: 1});
+            }
+
+        }
+    })*/
+/*function ww(response, status) {
+    var data = response.status;
+    if (data == 1) {
+        layer.alert('主题不能为空！',
+            {
+                title: '信息提示:',
+                icon: 2
+            }
+        );
+    } else if (data == 2) {
+        layer.alert('类型不能为空！',
+            {
+                title: '信息提示:',
+                icon: 2
+            }
+        );
+    } else if (data == 3) {
+        layer.alert('内容不能为空！',
+            {
+                title: '信息提示:',
+                icon: 2
+            }
+        );
+    } else if (data == 4) {
+        layer.alert('id不能为空！',
+            {
+                title: '信息提示:',
+                icon: 2
+            }
+        );
+    } else if (data == 0) {
+
+
+        layer.confirm('保存成功!',
+            {
+                title: '信息提示:',
+                icon: 1,
+                btn: ['确定'],
+            }
+        )
+    }
+    ;
+}*/

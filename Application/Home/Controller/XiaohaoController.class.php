@@ -107,6 +107,17 @@ class XiaohaoController extends Controller {
          $detail= $learn_res->where($map)->save($data);
          exit('{"status":0,"msg":"保存成功"}');
      }
+
+    function learn_detail(){ //获取单数据
+        $id=I('post.id');
+        $learn_res= D('learn_list');
+        if(empty(I('post.id'))){
+            exit('{"status":1,"msg":"id不能为空"}');
+        }
+        $map['id']=$id;
+        $detail= $learn_res->where($map)->select();
+        $this->ajaxReturn($detail, 'JSON');
+    }
     function theme_isrepeat(){ //删除数据
         $theme=I('post.theme');
         $learn_res= D('learn_list');
